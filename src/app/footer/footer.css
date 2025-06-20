@@ -1,0 +1,16 @@
+.footer {
+  background-color: #b3e0ff; /* Azul clarito en hexadecimal */
+  color: #003366;
+  text-align: center;
+  padding: 1rem 0;
+  font-size: 1rem;
+  position: fixed;
+  width: 100%;
+  bottom: 0;
+  left: 0;
+  box-shadow: 0 -2px 8px rgba(0,0,0,0.05);
+}
+
+.footer p {
+  margin: 0;
+}
