@@ -1,15 +1,11 @@
 .footer {
-  background-color: #b3e0ff; /* Azul clarito en hexadecimal */
+  background-color: #b3e0ff;
   color: #003366;
   text-align: center;
   padding: 1rem 0;
   font-size: 1rem;
-  position: fixed;
   width: 100%;
-  bottom: 0;
-  left: 0;
   box-shadow: 0 -2px 8px rgba(0,0,0,0.05);
-  z-index: 9999; /* Asegura que el footer esté por encima de otros elementos */
 }
 
 .footer p {
