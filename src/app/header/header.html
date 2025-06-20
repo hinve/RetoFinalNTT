@@ -1,0 +1,19 @@
+<mat-toolbar color="primary">
+    <mat-icon url></mat-icon>
+    <mat-icon>home</mat-icon>
+    <span>Gestión de Clientes</span>
+    <span style="flex: auto;"></span>
+    <button id="button-menu" mat-button [matMenuTriggerFor]="importMenu">
+        <mat-icon iconPositionEnd>keyboard_arrow_down</mat-icon>
+        Menu
+    </button>
+    <mat-menu #importMenu> <!--router link !!cambiar las rutas!!-->
+        <button mat-menu-item routerLink="/clientes">Ver Clientes</button>
+        <button mat-menu-item routerLink="/insertar">Insertar Cliente</button>
+        <button mat-menu-item routerLink="/modificiar">Modificar Cliente</button>
+        <button mat-menu-item routerLink="/eliminar">Eliminar Cliente</button>
+    </mat-menu>
+
+
+    <button mat-raised-button color="accent">Salir</button>
+</mat-toolbar>
