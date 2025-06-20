@@ -1,18 +1,30 @@
 <div class="container">
-  
-  <!-- Toolbar -->
-  <mat-toolbar color="primary" class="main-toolbar">
-    <mat-icon>people</mat-icon>
-    <span>Gestión de Clientes - API Funcionando! 🚀</span>
-  </mat-toolbar>
 
   <!-- Debug info -->
   <mat-card class="debug-card">
     <h3>🔍 Estado de la aplicación:</h3>
-    <p><strong>Cargando:</strong> {{ isLoading }}</p>
-    <p><strong>Error:</strong> {{ errorMessage || 'Ninguno ✅' }}</p>
-    <p><strong>Clientes cargados:</strong> {{ clientes.length }}</p>
-    <p><strong>DataSource length:</strong> {{ dataSource.data.length }}</p>
+    <div class="debug-info">
+      <div class="debug-item">
+        <span class="debug-label">Cargando:</span>
+        <span class="debug-value">{{ isLoading }}</span>
+      </div>
+      <div class="debug-item">
+        <span class="debug-label">Error:</span>
+        <span class="debug-value">{{ errorMessage || 'Ninguno ✅' }}</span>
+      </div>
+      <div class="debug-item">
+        <span class="debug-label">Total clientes:</span>
+        <span class="debug-value">{{ totalClients }}</span>
+      </div>
+      <div class="debug-item">
+        <span class="debug-label">Filtrados:</span>
+        <span class="debug-value">{{ getFilteredTotal() }}</span>
+      </div>
+      <div class="debug-item">
+        <span class="debug-label">Mostrando:</span>
+        <span class="debug-value">{{ getPaginationInfo() }}</span>
+      </div>
+    </div>
     
     <button mat-raised-button color="primary" (click)="loadClientes()" class="reload-button">
       🔄 Recargar Clientes
@@ -25,80 +37,188 @@
     <p class="loading-text">Cargando clientes...</p>
   </div>
 
-  <!-- Tabla Material Simple -->
-  <mat-card *ngIf="!isLoading && dataSource.data.length > 0" class="table-card">
-    <h3 class="success-title">✅ ¡Tabla de clientes cargada exitosamente!</h3>
-    
-    <table mat-table [dataSource]="dataSource" class="mat-elevation-z8 clients-table">
+  <!-- Sección de búsqueda y controles -->
+  <mat-card *ngIf="!isLoading" class="search-card">
+    <div class="search-section">
+      <mat-form-field appearance="outline" class="search-field">
+        <mat-label>Buscar clientes</mat-label>
+        <input 
+          matInput 
+          placeholder="Nombre, email o ingresos..."
+          [value]="searchValue"
+          (keyup)="applyFilter($event)">
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
       
-      <!-- ID Column -->
-      <ng-container matColumnDef="id">
-        <th mat-header-cell *matHeaderCellDef> ID </th>
-        <td mat-cell *matCellDef="let element"> {{element.id}} </td>
-      </ng-container>
+      <button 
+        mat-icon-button 
+        color="primary" 
+        (click)="clearFilter()"
+        matTooltip="Limpiar búsqueda"
+        *ngIf="searchValue"
+        class="clear-button">
+        <mat-icon>clear</mat-icon>
+      </button>
+    </div>
 
-      <!-- Name Column -->
-      <ng-container matColumnDef="name">
-        <th mat-header-cell *matHeaderCellDef> Nombre </th>
-        <td mat-cell *matCellDef="let element"> 
-          <strong class="client-name">{{element.name}}</strong>
-        </td>
-      </ng-container>
+    <!-- Información de paginación superior -->
+    <div class="pagination-info" *ngIf="totalClients > 0">
+      <span class="info-text">{{ getPaginationInfo() }} clientes</span>
+      <div class="pagination-controls">
+        <button 
+          mat-icon-button 
+          (click)="goToFirstPage()"
+          [disabled]="!paginator || paginator.pageIndex === 0"
+          matTooltip="Primera página">
+          <mat-icon>first_page</mat-icon>
+        </button>
+        <button 
+          mat-icon-button 
+          (click)="goToLastPage()"
+          [disabled]="!paginator || paginator.pageIndex === paginator.getNumberOfPages() - 1"
+          matTooltip="Última página">
+          <mat-icon>last_page</mat-icon>
+        </button>
+      </div>
+    </div>
+  </mat-card>
 
-      <!-- Email Column -->
-      <ng-container matColumnDef="contactEmail">
-        <th mat-header-cell *matHeaderCellDef> Email </th>
-        <td mat-cell *matCellDef="let element"> 
-          <a [href]="'mailto:' + element.contactEmail" class="email-link">
-            {{element.contactEmail}}
-          </a>
-        </td>
-      </ng-container>
+  <!-- Tabla con clientes -->
+  <mat-card *ngIf="!isLoading && totalClients > 0" class="table-card">
+    <div class="table-header">
+      <h3 class="success-title">✅ Gestión de Clientes</h3>
+      <button mat-fab color="primary" (click)="addClient()" class="fab-button" matTooltip="Agregar nuevo cliente">
+        <mat-icon>add</mat-icon>
+      </button>
+    </div>
+    
+    <div class="table-container">
+      <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8 clients-table">
+        
+        <!-- ID Column -->
+        <ng-container matColumnDef="id">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> 
+            <mat-icon class="column-icon">tag</mat-icon>
+            ID 
+          </th>
+          <td mat-cell *matCellDef="let element"> 
+            <span class="id-badge">{{element.id}}</span>
+          </td>
+        </ng-container>
 
-      <!-- Revenue Column -->
-      <ng-container matColumnDef="revenue">
-        <th mat-header-cell *matHeaderCellDef> Ingresos </th>
-        <td mat-cell *matCellDef="let element"> 
-          <span class="revenue">{{ element.revenue | currency:'EUR':'symbol':'1.2-2' }}</span>
-        </td>
-      </ng-container>
+        <!-- Name Column -->
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> 
+            <mat-icon class="column-icon">person</mat-icon>
+            Nombre 
+          </th>
+          <td mat-cell *matCellDef="let element"> 
+            <strong class="client-name">{{element.name}}</strong>
+          </td>
+        </ng-container>
 
-      <!-- Start Date Column -->
-      <ng-container matColumnDef="startDate">
-        <th mat-header-cell *matHeaderCellDef> Fecha Inicio </th>
-        <td mat-cell *matCellDef="let element"> 
-          <span class="date">{{ element.startDate | date:'dd/MM/yyyy' }}</span>
-        </td>
-      </ng-container>
+        <!-- Email Column -->
+        <ng-container matColumnDef="contactEmail">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> 
+            <mat-icon class="column-icon">email</mat-icon>
+            Email 
+          </th>
+          <td mat-cell *matCellDef="let element"> 
+            <a [href]="'mailto:' + element.contactEmail" class="email-link">
+              {{element.contactEmail}}
+            </a>
+          </td>
+        </ng-container>
 
-      <!-- Actions Column -->
-      <ng-container matColumnDef="actions">
-        <th mat-header-cell *matHeaderCellDef> Acciones </th>
-        <td mat-cell *matCellDef="let element" class="actions-cell"> 
-          <button mat-raised-button color="primary" (click)="editClient(element); $event.stopPropagation()" class="action-button">
-            ✏️ Editar
-          </button>
-          <button mat-raised-button color="warn" (click)="deleteClient(element); $event.stopPropagation()" class="action-button">
-            🗑️ Eliminar
-          </button>
-        </td>
-      </ng-container>
+        <!-- Revenue Column -->
+        <ng-container matColumnDef="revenue">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> 
+            <mat-icon class="column-icon">euro</mat-icon>
+            Ingresos 
+          </th>
+          <td mat-cell *matCellDef="let element"> 
+            <span class="revenue">{{ element.revenue | currency:'EUR':'symbol':'1.2-2' }}</span>
+          </td>
+        </ng-container>
 
-      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns;" 
-          class="data-row" 
-          (click)="editClient(row)"></tr>
-    </table>
+        <!-- Start Date Column -->
+        <ng-container matColumnDef="startDate">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> 
+            <mat-icon class="column-icon">event</mat-icon>
+            Fecha Inicio 
+          </th>
+          <td mat-cell *matCellDef="let element"> 
+            <span class="date">{{ element.startDate | date:'dd/MM/yyyy' }}</span>
+          </td>
+        </ng-container>
+
+        <!-- Actions Column -->
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef class="actions-header"> 
+            <mat-icon class="column-icon">settings</mat-icon>
+            Acciones 
+          </th>
+          <td mat-cell *matCellDef="let element" class="actions-cell"> 
+            <button 
+              mat-icon-button 
+              color="primary" 
+              (click)="editClient(element); $event.stopPropagation()" 
+              class="action-icon-button"
+              matTooltip="Editar cliente">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button 
+              mat-icon-button 
+              color="warn" 
+              (click)="deleteClient(element); $event.stopPropagation()" 
+              class="action-icon-button"
+              matTooltip="Eliminar cliente">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;" 
+            class="data-row" 
+            (click)="editClient(row)"></tr>
+      </table>
+    </div>
+
+    <!-- Paginador -->
+    <mat-paginator 
+      #paginator
+      [pageSizeOptions]="pageSizeOptions"
+      [pageSize]="defaultPageSize"
+      [showFirstLastButtons]="true"
+      [hidePageSize]="false"
+      aria-label="Seleccionar página de clientes"
+      class="custom-paginator">
+    </mat-paginator>
   </mat-card>
 
   <!-- Mensaje cuando no hay datos -->
-  <mat-card *ngIf="!isLoading && dataSource.data.length === 0" class="no-data-card">
+  <mat-card *ngIf="!isLoading && totalClients === 0" class="no-data-card">
     <div class="no-data-content">
-      <mat-icon class="no-data-icon">warning</mat-icon>
+      <mat-icon class="no-data-icon">people_outline</mat-icon>
       <h3>No hay clientes para mostrar</h3>
-      <p>Puede que la API no haya devuelto datos o haya un problema de conexión.</p>
-      <button mat-raised-button color="primary" (click)="loadClientes()">
-        🔄 Intentar de nuevo
+      <p>Comienza agregando tu primer cliente para empezar a gestionar tu base de datos.</p>
+      <button mat-raised-button color="primary" (click)="addClient()" class="add-first-client">
+        <mat-icon>add</mat-icon>
+        Agregar Primer Cliente
+      </button>
+    </div>
+  </mat-card>
+
+  <!-- Mensaje cuando no hay resultados de búsqueda -->
+  <mat-card *ngIf="!isLoading && totalClients > 0 && getFilteredTotal() === 0" class="no-results-card">
+    <div class="no-results-content">
+      <mat-icon class="no-results-icon">search_off</mat-icon>
+      <h3>No se encontraron resultados</h3>
+      <p>No hay clientes que coincidan con "<strong>{{ searchValue }}</strong>"</p>
+      <button mat-raised-button color="primary" (click)="clearFilter()" class="clear-search-button">
+        <mat-icon>clear</mat-icon>
+        Limpiar Búsqueda
       </button>
     </div>
   </mat-card>
