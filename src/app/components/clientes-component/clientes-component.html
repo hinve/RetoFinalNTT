@@ -1,0 +1,106 @@
+<div class="container">
+  
+  <!-- Toolbar -->
+  <mat-toolbar color="primary" class="main-toolbar">
+    <mat-icon>people</mat-icon>
+    <span>Gestión de Clientes - API Funcionando! 🚀</span>
+  </mat-toolbar>
+
+  <!-- Debug info -->
+  <mat-card class="debug-card">
+    <h3>🔍 Estado de la aplicación:</h3>
+    <p><strong>Cargando:</strong> {{ isLoading }}</p>
+    <p><strong>Error:</strong> {{ errorMessage || 'Ninguno ✅' }}</p>
+    <p><strong>Clientes cargados:</strong> {{ clientes.length }}</p>
+    <p><strong>DataSource length:</strong> {{ dataSource.data.length }}</p>
+    
+    <button mat-raised-button color="primary" (click)="loadClientes()" class="reload-button">
+      🔄 Recargar Clientes
+    </button>
+  </mat-card>
+
+  <!-- Loading spinner -->
+  <div *ngIf="isLoading" class="loading-container">
+    <mat-spinner diameter="60"></mat-spinner>
+    <p class="loading-text">Cargando clientes...</p>
+  </div>
+
+  <!-- Tabla Material Simple -->
+  <mat-card *ngIf="!isLoading && dataSource.data.length > 0" class="table-card">
+    <h3 class="success-title">✅ ¡Tabla de clientes cargada exitosamente!</h3>
+    
+    <table mat-table [dataSource]="dataSource" class="mat-elevation-z8 clients-table">
+      
+      <!-- ID Column -->
+      <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef> ID </th>
+        <td mat-cell *matCellDef="let element"> {{element.id}} </td>
+      </ng-container>
+
+      <!-- Name Column -->
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef> Nombre </th>
+        <td mat-cell *matCellDef="let element"> 
+          <strong class="client-name">{{element.name}}</strong>
+        </td>
+      </ng-container>
+
+      <!-- Email Column -->
+      <ng-container matColumnDef="contactEmail">
+        <th mat-header-cell *matHeaderCellDef> Email </th>
+        <td mat-cell *matCellDef="let element"> 
+          <a [href]="'mailto:' + element.contactEmail" class="email-link">
+            {{element.contactEmail}}
+          </a>
+        </td>
+      </ng-container>
+
+      <!-- Revenue Column -->
+      <ng-container matColumnDef="revenue">
+        <th mat-header-cell *matHeaderCellDef> Ingresos </th>
+        <td mat-cell *matCellDef="let element"> 
+          <span class="revenue">{{ element.revenue | currency:'EUR':'symbol':'1.2-2' }}</span>
+        </td>
+      </ng-container>
+
+      <!-- Start Date Column -->
+      <ng-container matColumnDef="startDate">
+        <th mat-header-cell *matHeaderCellDef> Fecha Inicio </th>
+        <td mat-cell *matCellDef="let element"> 
+          <span class="date">{{ element.startDate | date:'dd/MM/yyyy' }}</span>
+        </td>
+      </ng-container>
+
+      <!-- Actions Column -->
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef> Acciones </th>
+        <td mat-cell *matCellDef="let element" class="actions-cell"> 
+          <button mat-raised-button color="primary" (click)="editClient(element); $event.stopPropagation()" class="action-button">
+            ✏️ Editar
+          </button>
+          <button mat-raised-button color="warn" (click)="deleteClient(element); $event.stopPropagation()" class="action-button">
+            🗑️ Eliminar
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;" 
+          class="data-row" 
+          (click)="editClient(row)"></tr>
+    </table>
+  </mat-card>
+
+  <!-- Mensaje cuando no hay datos -->
+  <mat-card *ngIf="!isLoading && dataSource.data.length === 0" class="no-data-card">
+    <div class="no-data-content">
+      <mat-icon class="no-data-icon">warning</mat-icon>
+      <h3>No hay clientes para mostrar</h3>
+      <p>Puede que la API no haya devuelto datos o haya un problema de conexión.</p>
+      <button mat-raised-button color="primary" (click)="loadClientes()">
+        🔄 Intentar de nuevo
+      </button>
+    </div>
+  </mat-card>
+
+</div>
