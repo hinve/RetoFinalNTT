@@ -9,6 +9,7 @@
   bottom: 0;
   left: 0;
   box-shadow: 0 -2px 8px rgba(0,0,0,0.05);
+  z-index: 9999; /* Asegura que el footer esté por encima de otros elementos */
 }
 
 .footer p {
