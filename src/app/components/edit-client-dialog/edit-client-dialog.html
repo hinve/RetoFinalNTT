@@ -1,0 +1,116 @@
+<div class="dialog-container">
+  
+  <!-- Header del modal -->
+  <div mat-dialog-title class="dialog-header">
+    <div class="header-content">
+      <mat-icon class="header-icon">{{ isNew ? 'person_add' : 'edit' }}</mat-icon>
+      <h2>{{ isNew ? 'Nuevo Cliente' : 'Editar Cliente' }}</h2>
+    </div>
+  </div>
+
+  <!-- Contenido del modal -->
+  <div mat-dialog-content class="dialog-content">
+    <form [formGroup]="clientForm" (ngSubmit)="onSubmit()">
+      
+      <!-- Fila superior: Nombre y Email -->
+      <div class="form-row">
+        <!-- Campo Nombre -->
+        <mat-form-field appearance="outline" class="form-field full-width">
+          <mat-label>Nombre completo *</mat-label>
+          <input 
+            matInput 
+            formControlName="name"
+            placeholder="Ingrese el nombre completo"
+            [class.error]="name?.invalid && name?.touched">
+          <mat-icon matSuffix>person</mat-icon>
+          <mat-error *ngIf="name?.hasError('required')">
+            El nombre es requerido
+          </mat-error>
+          <mat-error *ngIf="name?.hasError('minlength')">
+            El nombre debe tener al menos 2 caracteres
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <div class="form-row">
+        <!-- Campo Email -->
+        <mat-form-field appearance="outline" class="form-field full-width">
+          <mat-label>Email *</mat-label>
+          <input 
+            matInput 
+            type="email"
+            formControlName="contactEmail"
+            placeholder="ejemplo@email.com"
+            [class.error]="contactEmail?.invalid && contactEmail?.touched">
+          <mat-icon matSuffix>email</mat-icon>
+          <mat-error *ngIf="contactEmail?.hasError('required')">
+            El email es requerido
+          </mat-error>
+          <mat-error *ngIf="contactEmail?.hasError('email')">
+            Debe ser un email válido
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <!-- Fila inferior: Ingresos y Fecha -->
+      <div class="form-row two-columns">
+        <!-- Campo Ingresos -->
+        <mat-form-field appearance="outline" class="form-field">
+          <mat-label>Ingresos anuales</mat-label>
+          <input 
+            matInput 
+            type="number"
+            formControlName="revenue"
+            placeholder="0.00"
+            [class.error]="revenue?.invalid && revenue?.touched">
+          <span matSuffix>€</span>
+          <mat-icon matSuffix>euro</mat-icon>
+          <mat-error *ngIf="revenue?.hasError('min')">
+            Los ingresos no pueden ser negativos
+          </mat-error>
+          <mat-hint>Ingresos anuales aproximados en euros</mat-hint>
+        </mat-form-field>
+
+        <!-- Campo Fecha de Inicio -->
+        <mat-form-field appearance="outline" class="form-field">
+          <mat-label>Fecha de inicio</mat-label>
+          <input 
+            matInput 
+            [matDatepicker]="picker"
+            formControlName="startDate"
+            placeholder="Seleccione una fecha">
+          <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-datepicker #picker></mat-datepicker>
+          <mat-hint>Fecha de inicio de la relación comercial</mat-hint>
+        </mat-form-field>
+      </div>
+
+    </form>
+  </div>
+
+  <!-- Botones de acción -->
+  <div mat-dialog-actions class="dialog-actions">
+    <button 
+      mat-button 
+      type="button"
+      (click)="onCancel()"
+      [disabled]="isSubmitting"
+      class="cancel-button">
+      <mat-icon>close</mat-icon>
+      Cancelar
+    </button>
+    
+    <button 
+      mat-raised-button 
+      color="primary"
+      type="submit"
+      (click)="onSubmit()"
+      [disabled]="clientForm.invalid || isSubmitting"
+      class="save-button">
+      <mat-icon *ngIf="!isSubmitting">{{ isNew ? 'add' : 'save' }}</mat-icon>
+      <mat-icon *ngIf="isSubmitting" class="spinning">refresh</mat-icon>
+      {{ isSubmitting ? 'Guardando...' : (isNew ? 'Crear Cliente' : 'Guardar Cambios') }}
+    </button>
+  </div>
+
+</div>
