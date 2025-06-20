@@ -1,0 +1,278 @@
+.dialog-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 580px;
+  height: 100%;
+  overflow: hidden;
+  position: relative;
+}
+
+/* === HEADER === */
+.dialog-header {
+  background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);
+  color: white;
+  padding: 20px 24px;
+  margin: 0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  position: relative;
+  z-index: 1;
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.header-icon {
+  font-size: 24px;
+  width: 24px;
+  height: 24px;
+}
+
+.dialog-header h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 500;
+}
+
+/* === CONTENIDO === */
+.dialog-content {
+  flex: 1;
+  padding: 36px 28px 32px 28px;
+  overflow-y: auto;
+  background-color: #fafafa;
+  position: relative;
+  z-index: 0;
+}
+
+.dialog-content form {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  min-height: 350px;
+  justify-content: flex-start;
+}
+
+/* === CAMPOS DEL FORMULARIO === */
+.form-row {
+  display: flex;
+  width: 100%;
+  margin-bottom: 28px;
+}
+
+.form-row.two-columns {
+  gap: 24px;
+}
+
+.form-row.two-columns .form-field {
+  flex: 1;
+}
+
+.form-field {
+  width: 100%;
+  margin-bottom: 0;
+  min-height: 85px;
+}
+
+.form-field.full-width {
+  width: 100%;
+}
+
+.form-field.mat-mdc-form-field {
+  background-color: white;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  padding: 8px 0;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.form-field.mat-mdc-form-field:hover {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.form-field.mat-mdc-form-field.mat-focused {
+  box-shadow: 0 4px 12px rgba(25, 118, 210, 0.2);
+}
+
+/* === ERRORES === */
+.form-field input.error {
+  border-color: #f44336;
+}
+
+.mat-mdc-form-field-error {
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+/* === HINT === */
+.mat-mdc-form-field-hint {
+  font-size: 12px;
+  color: #666;
+  margin-top: 4px;
+}
+
+/* === BOTONES === */
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 16px;
+  padding: 20px 28px;
+  background-color: white;
+  border-top: 1px solid #e0e0e0;
+  box-shadow: 0 -2px 8px rgba(0,0,0,0.05);
+  min-height: 70px;
+  align-items: center;
+}
+
+.cancel-button {
+  min-width: 120px;
+  height: 44px;
+  font-weight: 500;
+}
+
+.save-button {
+  min-width: 140px;
+  height: 44px;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(25, 118, 210, 0.3);
+}
+
+.save-button:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(25, 118, 210, 0.4);
+}
+
+.save-button:disabled {
+  opacity: 0.6;
+  transform: none;
+  box-shadow: none;
+}
+
+/* === ANIMACIÓN DE CARGA === */
+.spinning {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* === RESPONSIVE === */
+@media (max-width: 768px) {
+  .dialog-header {
+    padding: 16px 20px;
+  }
+  
+  .dialog-content {
+    padding: 28px 20px 24px 20px;
+  }
+  
+  .form-row {
+    margin-bottom: 24px;
+  }
+  
+  .form-row.two-columns {
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .dialog-actions {
+    padding: 16px 20px;
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .cancel-button,
+  .save-button {
+    width: 100%;
+    margin: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .dialog-header {
+    padding: 12px 16px;
+  }
+  
+  .header-content {
+    gap: 8px;
+  }
+  
+  .header-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+  }
+  
+  .dialog-header h2 {
+    font-size: 18px;
+  }
+  
+  .dialog-content {
+    padding: 16px;
+  }
+  
+  .dialog-actions {
+    padding: 12px 16px;
+  }
+}
+
+/* === MEJORAS VISUALES === */
+.form-field .mat-mdc-text-field-wrapper {
+  border-radius: 8px;
+}
+
+.form-field .mat-mdc-form-field-focus-overlay {
+  border-radius: 8px;
+}
+
+/* === ICONOS EN LOS CAMPOS === */
+.form-field .mat-mdc-form-field-icon-suffix {
+  color: #666;
+  transition: color 0.3s ease;
+}
+
+.form-field.mat-focused .mat-mdc-form-field-icon-suffix {
+  color: #1976d2;
+}
+
+/* === ETIQUETAS === */
+.form-field .mat-mdc-floating-label {
+  font-weight: 500;
+  z-index: 10;
+  position: relative;
+}
+
+.form-field .mat-mdc-form-field-label-wrapper {
+  position: relative;
+  z-index: 10;
+}
+
+/* Asegurar que el contenido del input no se solape */
+.form-field .mat-mdc-text-field-wrapper {
+  position: relative;
+  z-index: 5;
+}
+
+.form-field .mat-mdc-form-field-infix {
+  padding-top: 16px;
+  padding-bottom: 8px;
+}
+
+/* === ANIMACIONES === */
+.dialog-container {
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
