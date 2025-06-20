@@ -3,7 +3,18 @@ mat-toolbar{
     color: white;
 }
 
-#button-menu {
-    color: white;
+mat-icon {
+    margin: 0;
+    padding: 0;
 }
 
+button {
+    background-color: white;
+    color: #003366;
+    margin-right: 5px;
+}
+
+#button-home {
+    margin-left: 0px;
+    margin-right: 10px;
+}
