@@ -7,6 +7,7 @@ import {MatMenuModule} from '@angular/material/menu';
 import {MatButtonModule} from '@angular/material/button';
 import {MatSidenavModule} from '@angular/material/sidenav';
 import {MatListModule} from '@angular/material/list';
+import { RouterModule } from '@angular/router';
 @Component({
   selector: 'app-header',
   imports: [
@@ -17,7 +18,8 @@ import {MatListModule} from '@angular/material/list';
     MatMenuModule,
     MatButtonModule,
     MatSidenavModule,
-    MatListModule
+    MatListModule,
+    RouterModule
   ],
   templateUrl: './header.html',
   styleUrl: './header.css'
